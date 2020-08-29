@@ -27,7 +27,7 @@ export default function Newsfeed () {
   const classes = useStyles()
   const [posts, setPosts] = useState([])
   const jwt = auth.isAuthenticated()
-
+  // console.log(`posts:${posts}`)
   useEffect(() => {
     const abortController = new AbortController()
     const signal = abortController.signal

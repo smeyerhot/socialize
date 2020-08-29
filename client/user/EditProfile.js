@@ -9,6 +9,8 @@ import Icon from '@material-ui/core/Icon'
 import Avatar from '@material-ui/core/Avatar'
 import FileUpload from '@material-ui/icons/AddPhotoAlternate'
 import { makeStyles } from '@material-ui/core/styles'
+import FormControlLabel from '@material-ui/core/FormControlLabel'
+import Switch from '@material-ui/core/Switch'
 import auth from './../auth/auth-helper'
 import {read, update} from './api-user.js'
 import {Redirect} from 'react-router-dom'
@@ -58,9 +60,11 @@ export default function EditProfile({ match }) {
     photo: '',
     email: '',
     password: '',
+    seller: false,
     redirectToProfile: false,
     error: '',
-    id: ''
+    id: '',
+    
   })
   const jwt = auth.isAuthenticated()
 
@@ -74,7 +78,7 @@ export default function EditProfile({ match }) {
       if (data & data.error) {
         setValues({...values, error: data.error})
       } else {
-        setValues({...values, id: data._id, name: data.name, email: data.email, about: data.about})
+        setValues({...values, id: data._id, name: data.name, email: data.email, about: data.about, seller: data.seller})
       }
     })
     return function cleanup(){
@@ -87,9 +91,10 @@ export default function EditProfile({ match }) {
     let userData = new FormData()
     values.name && userData.append('name', values.name)
     values.email && userData.append('email', values.email)
-    values.passoword && userData.append('passoword', values.passoword)
+    values.password && userData.append('password', values.password)
     values.about && userData.append('about', values.about)
     values.photo && userData.append('photo', values.photo)
+    values.seller && userData.append('seller',values.seller)
     update({
       userId: match.params.userId
     }, {
@@ -108,6 +113,9 @@ export default function EditProfile({ match }) {
       : event.target.value
     //userData.set(name, value)
     setValues({...values, [name]: value })
+  }
+  const handleCheck = (event, checked) => {
+    setValues({...values, 'seller': checked})
   }
     const photoUrl = values.id
                  ? `/api/users/photo/${values.id}?${new Date().getTime()}`
@@ -142,12 +150,28 @@ export default function EditProfile({ match }) {
           /><br/>
           <TextField id="email" type="email" label="Email" className={classes.textField} value={values.email} onChange={handleChange('email')} margin="normal"/><br/>
           <TextField id="password" type="password" label="Password" className={classes.textField} value={values.password} onChange={handleChange('password')} margin="normal"/>
+          <Typography variant="subtitle1" className={classes.subheading}>
+            Seller Account
+          </Typography>
+          <FormControlLabel
+            control={
+              <Switch classes={{
+                                checked: classes.checked,
+                                bar: classes.bar,
+                              }}
+                      checked={values.seller}
+                      onChange={handleCheck}
+              />}
+            label={values.seller? 'Active' : 'Inactive'}
+          />
           <br/> {
             values.error && (<Typography component="p" color="error">
               <Icon color="error" className={classes.error}>error</Icon>
               {values.error}
             </Typography>)
           }
+         
+
         </CardContent>
         <CardActions>
           <Button color="primary" variant="contained" onClick={clickSubmit} className={classes.submit}>Submit</Button>

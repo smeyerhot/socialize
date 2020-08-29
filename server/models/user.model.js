@@ -32,7 +32,13 @@ const UserSchema = new mongoose.Schema({
     contentType: String
   },
   following: [{type: mongoose.Schema.ObjectId, ref: 'User'}],
-  followers: [{type: mongoose.Schema.ObjectId, ref: 'User'}]
+  followers: [{type: mongoose.Schema.ObjectId, ref: 'User'}],
+  seller: {
+    type: Boolean,
+    default: false
+  },
+  stripe_seller: {},
+  stripe_customer: {}
 })
 
 UserSchema

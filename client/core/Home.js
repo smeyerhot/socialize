@@ -4,11 +4,16 @@ import Card from '@material-ui/core/Card'
 import CardMedia from '@material-ui/core/CardMedia'
 import CardContent from '@material-ui/core/CardContent'
 import Typography from '@material-ui/core/Typography'
-import unicornbikeImg from './../assets/images/unicornbike.jpg'
+import backgroundImg from './../assets/images/background.jpg'
 import Grid from '@material-ui/core/Grid'
+import Suggestions from './../product/Suggestions'
+import {listLatest, listCategories} from './../product/api-product.js'
+import Search from './../product/Search'
+import Categories from './../product/Categories'
 import auth from './../auth/auth-helper'
 import FindPeople from './../user/FindPeople'
 import Newsfeed from './../post/Newsfeed'
+
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -42,7 +47,40 @@ const useStyles = makeStyles(theme => ({
 export default function Home({history}){
   const classes = useStyles()
   const [defaultPage, setDefaultPage] = useState(false)
+  const [suggestionTitle, setSuggestionTitle] = useState("Latest Products")
+  const [categories, setCategories] = useState([])
+  const [suggestions, setSuggestions] = useState([])
 
+
+  useEffect(() => {
+    const abortController = new AbortController()
+    const signal = abortController.signal
+    listLatest(signal).then((data) => {
+      if (data.error) {
+        console.log(data.error)
+      } else {
+        setSuggestions(data)
+      }
+    })
+    return function cleanup(){
+      abortController.abort()
+    }
+  }, [])
+
+  useEffect(() => {
+    const abortController = new AbortController()
+    const signal = abortController.signal
+    listCategories(signal).then((data) => {
+      if (data.error) {
+        console.log(data.error)
+      } else {
+        setCategories(data)
+      }
+    })
+    return function cleanup(){
+      abortController.abort()
+    }
+  }, [])
   useEffect(()=> {
     setDefaultPage(auth.isAuthenticated())
     const unlisten = history.listen (() => {
@@ -62,11 +100,11 @@ export default function Home({history}){
                 <Typography variant="h6" className={classes.title}>
                   Home Page
                 </Typography>
-                <CardMedia className={classes.media} image={unicornbikeImg} title="Unicorn Bicycle"/>
-                <Typography variant="body2" component="p" className={classes.credit} color="textSecondary">Photo by <a href="https://unsplash.com/@boudewijn_huysmans" target="_blank" rel="noopener noreferrer">Boudewijn Huysmans</a> on Unsplash</Typography>
+                <CardMedia className={classes.media} image={backgroundImg} title="Unicorn Bicycle"/>
+                <Typography variant="body2" component="p" className={classes.credit} color="textSecondary">Photo by <a href="https://unsplash.com/@wildandfree_photography" target="_blank" rel="noopener noreferrer">Damien Markutt</a> on Unsplash</Typography>
                 <CardContent>
                   <Typography type="body1" component="p">
-                    Welcome to the MERN Social home page. 
+                    Welcome to the Socialize home page. 
                   </Typography>
                 </CardContent>
               </Card>
@@ -77,8 +115,11 @@ export default function Home({history}){
           <Grid container spacing={8}>
             <Grid item xs={8} sm={7}>
               <Newsfeed/>
+              <Search categories={categories}/>
+              <Categories categories={categories}/>
             </Grid>
             <Grid item xs={6} sm={5}>
+              <Suggestions products={suggestions} title={suggestionTitle}/>
               <FindPeople/>
             </Grid>
           </Grid>

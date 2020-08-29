@@ -15,6 +15,9 @@ const config = {
         filename: 'bundle.js',
         publicPath: '/dist/'
     },
+    node: {
+        fs: "empty"
+    },
     module: {
         rules: [
             {
@@ -27,7 +30,15 @@ const config = {
             {
                 test: /\.(ttf|eot|svg|gif|jpg|png)(\?[\s\S]+)?$/,
                 use: 'file-loader'
+            },
+            {
+                test: /\.css$/,
+                loaders: [
+                  'style-loader',
+                  'css-loader',
+                ],
             }
+
         ]
     },  
     plugins: [
@@ -42,3 +53,4 @@ const config = {
 }
 
 module.exports = config
+

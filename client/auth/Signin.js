@@ -51,8 +51,10 @@ export default function Signin(props) {
       email: values.email || undefined,
       password: values.password || undefined
     }
-
+    
     signin(user).then((data) => {
+      console.log(`data${JSON.stringify(data)}`)
+      console.log(typeof(data))
       if (data.error) {
         setValues({ ...values, error: data.error})
       } else {

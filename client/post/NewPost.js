@@ -64,6 +64,8 @@ export default function NewPost (props){
     error: '',
     user: {}
   })
+  console.log(values);
+  console.log(props);
   const jwt = auth.isAuthenticated()
   useEffect(() => {
     setValues({...values, user: auth.isAuthenticated().user})

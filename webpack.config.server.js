@@ -12,6 +12,9 @@ const config = {
         publicPath: '/dist/',
         libraryTarget: "commonjs2"
     },
+    node: {
+        fs: "empty"
+    },
     externals: [nodeExternals()],
     module: {
         rules: [
@@ -23,7 +26,21 @@ const config = {
             {
                 test: /\.(ttf|eot|svg|gif|jpg|png)(\?[\s\S]+)?$/,
                 use: 'file-loader'
+            },
+            {
+                test: /\.css$/,
+
+                use: [
+                    'isomorphic-style-loader',
+                    {
+                      loader: 'css-loader',
+                      options: {
+                        importLoaders: 1
+                      }
+                    }
+                ]
             }
+
         ]
     }
 }
